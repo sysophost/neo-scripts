@@ -9,6 +9,9 @@ PARSER.add_argument('-ifile', type=str, default='file.csv', help='Path to input 
 PARSER.add_argument('-ofile', type=str, default='file_humandate.csv', help='Path to output CSV')
 PARSER.add_argument('-col', type=int, default=1, help='Column with epoch time')
 PARSER.add_argument('-delim', type=str, default=',', help='CSV delimiter')
+PARSER.add_argument('-shortdate', action='store_true', help='Only output the date (no time value)')
+PARSER.add_argument('-usdate', action='store_true', help='Output using US date format MM/DD/YY')
+PARSER.add_argument('-dateformat', type=str, default='%H:%M:%S %d/%m/%Y', help='Custom format for date output (default %%H:%%M:%%S %%d/%%m/%%Y')
 
 ARGS = PARSER.parse_args()
 
@@ -29,7 +32,19 @@ try:
             if LINE_COUNT == 0:
                 LINE_COUNT += 1
             else:
-                row[ARGS.col] = time.strftime('%H:%M:%S %d/%m/%Y', time.localtime(float(epochtime)))
+                date_format = ''
+
+                if ARGS.shortdate:
+                    date_format = '%d/%m/%Y'
+                elif ARGS.usdate:
+                    date_format = '%H:%M:%S %m/%d/%Y'
+                elif ARGS.usdate and ARGS.shortdate:
+                    date_format = '%m/%d/%Y'
+                else:
+                    date_format = ARGS.dateformat
+
+
+                row[ARGS.col] = time.strftime(date_format, time.localtime(float(epochtime)))
             CSV_WRITER.writerow(row)
         output_csv_file.close()
 
