@@ -5,13 +5,13 @@ import sys
 import requests
 
 PARSER = argparse.ArgumentParser()
-PARSER.add_argument('-dh', '-dbhost', type=str, default='127.0.0.1', help='IP address or hostname where Neo4J is running')
-PARSER.add_argument('-dp', '-dbport', type=str, default='7474', help='Neo4J listen port')
-PARSER.add_argument('-u', '-username', type=str, default='neo4j', help='Neo4J username')
-PARSER.add_argument('-p', '-password', type=str, default='Pa55w0rd', help='Neo4J password')
-PARSER.add_argument('-f', '-file', type=str, default='file.txt', help='Path to file containing matched_object names')
-PARSER.add_argument('-o', '-owned', action='store_true', help='Marked matched_objects as owned')
-PARSER.add_argument('-hv', '-highvalue', action='store_true', help='Marked matched_objects as high value')
+PARSER.add_argument('-dbhost', type=str, default='127.0.0.1', help='IP address or hostname where Neo4J is running')
+PARSER.add_argument('-dbport', type=str, default='7474', help='Neo4J listen port')
+PARSER.add_argument('-username', type=str, default='neo4j', help='Neo4J username')
+PARSER.add_argument('-password', type=str, default='Pa55w0rd', help='Neo4J password')
+PARSER.add_argument('-file', type=str, default='file.txt', help='Path to file containing matched_object names')
+PARSER.add_argument('-owned', action='store_true', help='Marked matched_objects as owned')
+PARSER.add_argument('-highvalue', action='store_true', help='Marked matched_objects as high value')
 PARSER.add_argument('-v', '-verbose', action="store_true", help="increase output verbosity")
 
 ARGS = PARSER.parse_args()
