@@ -12,7 +12,7 @@ PARSER.add_argument('-password', type=str, default='Pa55w0rd', help='Neo4J passw
 PARSER.add_argument('-file', type=str, default='file.txt', help='Path to file containing matched_object names')
 PARSER.add_argument('-owned', action='store_true', help='Marked matched_objects as owned')
 PARSER.add_argument('-highvalue', action='store_true', help='Marked matched_objects as high value')
-PARSER.add_argument('-v', '-verbose', action="store_true", help="increase output verbosity")
+PARSER.add_argument('-v', '-verbose', action='store_true', help='increase output verbosity')
 
 ARGS = PARSER.parse_args()
 
@@ -20,6 +20,7 @@ if not ARGS.owned and not ARGS.highvalue:
     PARSER.error('-owned or -highvalue must be specified')
 
 REQUEST_TIMEOUT = 30
+
 
 def main():
     try:
@@ -35,8 +36,8 @@ def main():
     base64auth = base64.b64encode('{0}:{1}'.format(ARGS.username, ARGS.password))
 
     headers = {
-        'Authorization':'Basic {0}'.format(base64auth),
-        'Content-Type':'application/json'
+        'Authorization': 'Basic {0}'.format(base64auth),
+        'Content-Type': 'application/json'
     }
 
     find_query = construct_find_query(input_objects)
@@ -49,7 +50,6 @@ def main():
         for matched_object in matched_objects:
             print('{0}'.format(matched_object['row'][0]['name']))
 
-
     print('[i] Performing update of {0} records'.format(matched_object_count))
 
     update_query = construct_update_query(input_objects, ARGS.owned, ARGS.highvalue)
@@ -57,14 +57,16 @@ def main():
     matched_objects = update_response.json()['results'][0]['data']
     if ARGS.verbose:
         for matched_object in matched_objects:
-            print('{0}\r\n\tOwned:{1}\r\n\tHighvalue:{2}\r\n'.format(\
-              matched_object['row'][0]['name'], matched_object['row'][0]['owned'], matched_object['row'][0]['highvalue']))
+            print('{0}\r\n\tOwned:{1}\r\n\tHighvalue:{2}\r\n'.format(
+                matched_object['row'][0]['name'], matched_object['row'][0]['owned'], matched_object['row'][0]['highvalue']))
+
 
 def construct_find_query(matched_objects):
     data = {
         "statements": [{'statement': 'MATCH (n) WHERE n.name IN {0} RETURN n'.format(matched_objects)}]
     }
     return data
+
 
 def construct_update_query(matched_objects, owned, highvalue):
     owned_action = 'n.owned=TRUE' if owned else ''
@@ -75,6 +77,7 @@ def construct_update_query(matched_objects, owned, highvalue):
     }
     return data
 
+
 def query_neo(neo_url, headers, data):
     try:
         neo_response = requests.post(url=neo_url, headers=headers, json=data, timeout=REQUEST_TIMEOUT)
@@ -83,6 +86,7 @@ def query_neo(neo_url, headers, data):
     except requests.exceptions.HTTPError as err:
         print(err)
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()
