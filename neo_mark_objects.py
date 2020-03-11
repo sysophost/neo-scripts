@@ -12,7 +12,7 @@ PARSER.add_argument('-password', type=str, default='Pa55w0rd', help='Neo4J passw
 PARSER.add_argument('-file', type=str, default='file.txt', help='Path to file containing matched_object names')
 PARSER.add_argument('-owned', action='store_true', help='Marked matched_objects as owned')
 PARSER.add_argument('-highvalue', action='store_true', help='Marked matched_objects as high value')
-PARSER.add_argument('-v', '-verbose', action='store_true', help='increase output verbosity')
+PARSER.add_argument('-verbose', action='store_true', help='increase output verbosity')
 
 ARGS = PARSER.parse_args()
 
