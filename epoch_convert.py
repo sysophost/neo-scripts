@@ -49,5 +49,5 @@ try:
         output_csv_file.close()
 
 except (OSError, IOError):
-    print('{0} not found'.format(ARGS.file))
+    print(f"{ARGS.ifile} not found")
     sys.exit(1)

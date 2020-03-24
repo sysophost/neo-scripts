@@ -22,18 +22,21 @@ if not ARGS.owned and not ARGS.highvalue:
 REQUEST_TIMEOUT = 30
 
 
+verbose_print = print if ARGS.verbose else lambda *a, **k: None
+
 def main():
     try:
         with open(ARGS.file) as objects_file:
             input_objects = objects_file.read().splitlines()
-            print('Found {0} object(s) in {1}'.format(len(input_objects), ARGS.file))
+            print(f"Found {len(input_objects)} object(s) in {ARGS.file}")
 
     except (OSError, IOError):
-        print('{0} not found'.format(ARGS.file))
+        print(f"{ARGS.file} not found")
         sys.exit(1)
 
     neo_url = 'http://{0}:{1}/db/data/transaction/commit'.format(ARGS.dbhost, ARGS.dbport)
-    base64auth = base64.b64encode('{0}:{1}'.format(ARGS.username, ARGS.password))
+    credString = '{0}:{1}'.format(ARGS.username, ARGS.password)
+    base64auth = base64.b64encode(credString.encode()).decode('ascii')
 
     headers = {
         'Authorization': 'Basic {0}'.format(base64auth),
@@ -45,21 +48,17 @@ def main():
     matched_objects = find_response.json()['results'][0]['data']
     matched_object_count = len(matched_objects)
 
-    print('[i] Query returned {0} object(s)'.format(matched_object_count))
-    if ARGS.verbose:
-        for matched_object in matched_objects:
-            print('{0}'.format(matched_object['row'][0]['name']))
+    print(f"[i] Query returned {matched_object_count} object(s)") 
 
-    print('[i] Performing update of {0} records'.format(matched_object_count))
+    for matched_object in matched_objects:
+            verbose_print(f"{matched_object['row'][0]['name']}")
 
+    print(f"[i] Performing update of {matched_object_count} object(s)") 
     update_query = construct_update_query(input_objects, ARGS.owned, ARGS.highvalue)
     update_response = query_neo(neo_url, headers, update_query)
     matched_objects = update_response.json()['results'][0]['data']
-    if ARGS.verbose:
-        for matched_object in matched_objects:
-            print('{0}\r\n\tOwned:{1}\r\n\tHighvalue:{2}\r\n'.format(
-                matched_object['row'][0]['name'], matched_object['row'][0]['owned'], matched_object['row'][0]['highvalue']))
-
+    for matched_object in matched_objects:
+        verbose_print(f"{matched_object['row'][0]['name']}\r\n\tOwned:{matched_object['row'][0]['owned']}\r\n\tHighvalue:{matched_object['row'][0]['highvalue']}\r\n")
 
 def construct_find_query(matched_objects):
     data = {
@@ -84,7 +83,7 @@ def query_neo(neo_url, headers, data):
         neo_response.raise_for_status()
         return neo_response
     except requests.exceptions.HTTPError as err:
-        print(err)
+        print(f"{err}")
         sys.exit(1)
 
 
