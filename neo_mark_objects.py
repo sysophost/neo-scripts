@@ -28,18 +28,18 @@ def main():
     try:
         with open(ARGS.file) as objects_file:
             input_objects = objects_file.read().splitlines()
-            print(f"Found {len(input_objects)} object(s) in {ARGS.file}")
+            print(f'Found {len(input_objects)} object(s) in {ARGS.file}')
 
     except (OSError, IOError):
-        print(f"{ARGS.file} not found")
+        print(f'{ARGS.file} not found')
         sys.exit(1)
 
-    neo_url = 'http://{0}:{1}/db/data/transaction/commit'.format(ARGS.dbhost, ARGS.dbport)
-    credString = '{0}:{1}'.format(ARGS.username, ARGS.password)
+    neo_url = f'http://{ARGS.dbhost}:{ARGS.dbport}/db/data/transaction/commit'
+    credString = f'{ARGS.username}:{ARGS.password}'
     base64auth = base64.b64encode(credString.encode()).decode('ascii')
 
     headers = {
-        'Authorization': 'Basic {0}'.format(base64auth),
+        'Authorization': f'Basic {base64auth}',
         'Content-Type': 'application/json'
     }
 
@@ -48,12 +48,12 @@ def main():
     matched_objects = find_response.json()['results'][0]['data']
     matched_object_count = len(matched_objects)
 
-    print(f"[i] Query returned {matched_object_count} object(s)") 
+    print(f'[i] Query returned {matched_object_count} object(s)') 
 
     for matched_object in matched_objects:
             verbose_print(f"{matched_object['row'][0]['name']}")
 
-    print(f"[i] Performing update of {matched_object_count} object(s)") 
+    print(f'[i] Performing update of {matched_object_count} object(s)') 
     update_query = construct_update_query(input_objects, ARGS.owned, ARGS.highvalue)
     update_response = query_neo(neo_url, headers, update_query)
     matched_objects = update_response.json()['results'][0]['data']
@@ -62,7 +62,7 @@ def main():
 
 def construct_find_query(matched_objects):
     data = {
-        "statements": [{'statement': 'MATCH (n) WHERE n.name IN {0} RETURN n'.format(matched_objects)}]
+        'statements': [{'statement': f'MATCH (n) WHERE n.name IN {matched_objects} RETURN n'}]
     }
     return data
 
@@ -71,8 +71,10 @@ def construct_update_query(matched_objects, owned, highvalue):
     owned_action = 'n.owned=TRUE' if owned else ''
     highvalue_action = 'n.highvalue=TRUE' if highvalue else ''
 
+    delim = ', ' if owned and highvalue else ''
+
     data = {
-        "statements": [{'statement': 'MATCH (n) WHERE n.name IN {0} SET {1} {2} RETURN n'.format(matched_objects, owned_action, highvalue_action)}]
+        'statements': [{'statement': f'MATCH (n) WHERE n.name IN {matched_objects} SET {owned_action} {delim} {highvalue_action} RETURN n'}]
     }
     return data
 
@@ -83,9 +85,9 @@ def query_neo(neo_url, headers, data):
         neo_response.raise_for_status()
         return neo_response
     except requests.exceptions.HTTPError as err:
-        print(f"{err}")
+        print(err)
         sys.exit(1)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
