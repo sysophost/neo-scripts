@@ -70,7 +70,6 @@ def construct_find_query(matched_objects):
 def construct_update_query(matched_objects, owned, highvalue):
     owned_action = 'n.owned=TRUE' if owned else ''
     highvalue_action = 'n.highvalue=TRUE' if highvalue else ''
-
     delim = ', ' if owned and highvalue else ''
 
     data = {
