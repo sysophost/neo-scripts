@@ -38,10 +38,11 @@ try:
             date_format = ARGS.dateformat
 
         for row in LINES:
-            for col in ARGS.col:
-                epochtime = row[col]
-                row[col] = time.strftime(date_format, time.localtime(float(epochtime)))
-            CSV_WRITER.writerow(row)
+            if any(row):
+                for col in ARGS.col:
+                    epochtime = row[col]
+                    row[col] = time.strftime(date_format, time.localtime(float(epochtime)))
+                CSV_WRITER.writerow(row)
         output_csv_file.close()
 
 except (OSError, IOError):
