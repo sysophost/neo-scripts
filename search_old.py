@@ -74,7 +74,7 @@ def main():
     output_csv_file.close()
     print(f"[i] Output file written to {ARGS.outfile}")
 
-def construct_find_query(field, days):#
+def construct_find_query(field, days):
     data = {
         'statements': [{'statement': f'MATCH (u:User) WHERE u.{field} <= (datetime().epochseconds - ({days} * 86400)) and NOT u.{field} IN [-1.0, 0.0] RETURN u ORDER BY u.name ASC'}]
     }
