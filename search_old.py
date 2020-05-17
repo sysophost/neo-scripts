@@ -72,6 +72,7 @@ def main():
             CSV_WRITER.writerow([name,human_time,delta])
 
     output_csv_file.close()
+    print(f"[i] Output file written to {ARGS.outfile}")
 
 def construct_find_query(field, days):#
     data = {
