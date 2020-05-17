@@ -1,8 +1,8 @@
 # #!/usr/bin/python
-import time
 import argparse
 import csv
 import sys
+from datetime import datetime
 
 PARSER = argparse.ArgumentParser()
 PARSER.add_argument('-ifile', '-i', type=str, default='file.csv', help='Path to input CSV')
@@ -41,7 +41,8 @@ try:
             if any(row):
                 for col in ARGS.col:
                     epochtime = row[col]
-                    row[col] = time.strftime(date_format, time.localtime(float(epochtime)))
+                    row[col] = datetime.fromtimestamp(epochtime).strftime(date_format)
+
                 CSV_WRITER.writerow(row)
         output_csv_file.close()
 

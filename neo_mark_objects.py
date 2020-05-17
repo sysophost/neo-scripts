@@ -2,6 +2,7 @@
 import argparse
 import base64
 import sys
+
 import requests
 
 PARSER = argparse.ArgumentParser()
