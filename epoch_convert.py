@@ -23,7 +23,7 @@ try:
         LINES = list(CSV_READER)
     input_csv_file.close()
 
-    #modify date and write updated data to a new file
+    # modify date and write updated data to a new file
     with open(ARGS.ofile, "w") as output_csv_file:
         CSV_WRITER = csv.writer(output_csv_file, delimiter=ARGS.delim)
         CSV_WRITER.writerow(HEADERS)
